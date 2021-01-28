@@ -1,24 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment, useState, useEffect } from 'react'
+import Cita from './components/Cita'
+import Formulario from './components/Formulario'
 
 function App() {
+
+  let citasIniciales = JSON.parse(localStorage.getItem('citas'))
+  if(!citasIniciales){
+    citasIniciales = []
+  }
+
+  const [citas, updateCitas] = useState(citasIniciales)
+
+  useEffect(()=>{
+    if(citasIniciales){
+      localStorage.setItem('citas',JSON.stringify(citas))
+    }else{
+      localStorage.setItem('citas',JSON.stringify([]))
+    }      
+  }, [citas])
+
+  const crearCita = cita => {
+      updateCitas([
+        ...citas,
+        cita
+      ])
+  }
+
+  const deleteCita = id => {
+      const nuevasCitas = citas.filter(cita => cita.id !== id)
+      updateCitas(nuevasCitas)
+  }
+
+  const titulo = citas.length == 0 ? 'No hay citas' : 'Administra tus citas'
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <h1 className="text-5xl font-bold">Administrador de pacientes.</h1>
+      <div className="container mx-auto my-2">
+        <div className="grid md:grid-cols-2 gap2 grid-cols-1">
+          <div>
+            <Formulario
+              crearCita={crearCita}
+            />
+          </div>
+          <div>
+          <h1 className="text-4xl font-bold">{titulo}</h1>
+            {citas.map( cita => (
+              <Cita 
+              deleteCita={deleteCita}
+              key={cita.id}
+              cita={cita}
+            />
+            ))}
+          </div>
+        </div>        
+      </div>
+    </Fragment>
   );
 }
 
