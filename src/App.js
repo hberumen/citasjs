@@ -12,6 +12,7 @@ function App() {
   const [citas, updateCitas] = useState(citasIniciales)
 
   useEffect(()=>{
+    let citasIniciales = JSON.parse(localStorage.getItem('citas'))
     if(citasIniciales){
       localStorage.setItem('citas',JSON.stringify(citas))
     }else{
